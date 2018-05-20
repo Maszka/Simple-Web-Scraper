@@ -30,7 +30,7 @@ namespace SimpleWebScraper
                     string content = client.DownloadString($"http://{craigsListCity.Replace(" ", string.Empty)}.craigslist.org/{ Method}/{craigsListCategoryName}");
                     ScrapeCriteria scrapeCriteria = new ScrapeCriteriaBuilder()
                         .WithData(content)
-                        .WithRegex(@"<a href=\""(.*?)\""data-id=\""(.*?)""class=\""result-title hdrlnk\"">(.*?)</a>")
+                        .WithRegex(@"<a href=\""(.*?)\"" data-id=\""(.*?)"" class=\""result-title hdrlnk\"">(.*?)</a>")
                         .WithRegexOption(RegexOptions.ExplicitCapture)
                         .WithPart(new ScrapeCriteriaPartBuilder()
                             .WithRegex(@">(.*?)</a>")
@@ -56,6 +56,7 @@ namespace SimpleWebScraper
                     }
 
                 }
+                Console.ReadKey();
 
             }
             catch (Exception ex)
