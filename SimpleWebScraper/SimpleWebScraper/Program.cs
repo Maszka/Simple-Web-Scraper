@@ -17,44 +17,52 @@ namespace SimpleWebScraper
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Please enter the city");
-            var craigsListCity = Console.ReadLine() ?? string.Empty;
-
-            Console.WriteLine("Please enter the CraigsList category");
-            var craigsListCategoryName = Console.ReadLine() ?? string.Empty;
-
-            using(WebClient client  = new WebClient())
+            try
             {
-                string content = client.DownloadString($"http://{craigsListCity.Replace(" ", string.Empty)}.craigslist.org/{ Method}/{craigsListCategoryName}");
-                ScrapeCriteria scrapeCriteria = new ScrapeCriteriaBuilder()
-                    .WithData(content)
-                    .WithRegex(@"<a href=\""(.*?)\""data-id=\""(.*?)""class=\""result-title hdrlnk\"">(.*?)</a>")
-                    .WithRegexOption(RegexOptions.ExplicitCapture)
-                    .WithPart(new ScrapeCriteriaPartBuilder()
-                        .WithRegex(@">(.*?)</a>")
-                        .WithRegexOption(RegexOptions.Singleline)
-                        .Built())
-                    .WithPart(new ScrapeCriteriaPartBuilder()
-                        .WithRegex(@"href=\""(.*?)\""")
-                        .WithRegexOption(RegexOptions.Singleline)
-                        .Built())
-                    .Build();
+                Console.WriteLine("Please enter the city");
+                var craigsListCity = Console.ReadLine() ?? string.Empty;
 
-                Scraper scraper = new Scraper();
+                Console.WriteLine("Please enter the CraigsList category");
+                var craigsListCategoryName = Console.ReadLine() ?? string.Empty;
 
-                var scrapedElements = scraper.Scrape(scrapeCriteria);
-
-                if (scrapedElements.Any())
+                using (WebClient client = new WebClient())
                 {
-                    foreach (var scrapedElement in scrapedElements) Console.WriteLine(scrapedElement);
-                }
-                else
-                {
-                    Console.WriteLine("No matches");
+                    string content = client.DownloadString($"http://{craigsListCity.Replace(" ", string.Empty)}.craigslist.org/{ Method}/{craigsListCategoryName}");
+                    ScrapeCriteria scrapeCriteria = new ScrapeCriteriaBuilder()
+                        .WithData(content)
+                        .WithRegex(@"<a href=\""(.*?)\""data-id=\""(.*?)""class=\""result-title hdrlnk\"">(.*?)</a>")
+                        .WithRegexOption(RegexOptions.ExplicitCapture)
+                        .WithPart(new ScrapeCriteriaPartBuilder()
+                            .WithRegex(@">(.*?)</a>")
+                            .WithRegexOption(RegexOptions.Singleline)
+                            .Built())
+                        .WithPart(new ScrapeCriteriaPartBuilder()
+                            .WithRegex(@"href=\""(.*?)\""")
+                            .WithRegexOption(RegexOptions.Singleline)
+                            .Built())
+                        .Build();
+
+                    Scraper scraper = new Scraper();
+
+                    var scrapedElements = scraper.Scrape(scrapeCriteria);
+
+                    if (scrapedElements.Any())
+                    {
+                        foreach (var scrapedElement in scrapedElements) Console.WriteLine(scrapedElement);
+                    }
+                    else
+                    {
+                        Console.WriteLine("No matches");
+                    }
+
                 }
 
             }
-           
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
